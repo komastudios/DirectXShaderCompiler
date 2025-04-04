@@ -14,10 +14,17 @@
 #include "dxc/DxilCompression/DxilCompression.h"
 #include "dxc/Support/Global.h"
 #include "dxc/Support/WinIncludes.h"
+#include "llvm/Config/config.h"
 
+#if LLVM_ENABLE_ZLIB == 1
+#include <zlib.h>
+typedef uInt ZlibSize_t;
+typedef z_const Bytef* ZlibInputBytesfp;
+#else
 #include "miniz.h"
 typedef size_t ZlibSize_t;
-typedef const Bytef ZlibInputBytesf;
+typedef const Bytef* ZlibInputBytesfp;
+#endif
 
 namespace {
 //
@@ -112,7 +119,7 @@ hlsl::ZlibResult hlsl::ZlibDecompress(IMalloc *pMalloc,
     return zlib.GetInitializationResult();
 
   pStream->avail_in = BufferSizeInBytes;
-  pStream->next_in = (ZlibInputBytesf *)pCompressedBuffer;
+  pStream->next_in = (ZlibInputBytesfp)pCompressedBuffer;
   pStream->next_out = (Byte *)pUncompressedBuffer;
   pStream->avail_out = UncompressedBufferSize;
 
@@ -139,7 +146,7 @@ hlsl::ZlibResult hlsl::ZlibCompress(IMalloc *pMalloc, const void *pData,
   if (!pDestBuffer)
     return ZlibResult::OutOfMemory;
 
-  pStream->next_in = (ZlibInputBytesf *)pData;
+  pStream->next_in = (ZlibInputBytesfp)pData;
   pStream->avail_in = pDataSize;
   pStream->next_out = (Byte *)pDestBuffer;
   pStream->avail_out = UpperBound;

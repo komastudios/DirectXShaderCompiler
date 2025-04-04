@@ -17,13 +17,13 @@
 #include "llvm/Config/config.h"
 #include "llvm/Support/Compiler.h"
 #include "llvm/Support/ErrorHandling.h"
-#if LLVM_ENABLE_ZLIB == 1 && HAVE_ZLIB_H
+#if LLVM_ENABLE_ZLIB == 1
 #include <zlib.h>
 #endif
 
 using namespace llvm;
 
-#if LLVM_ENABLE_ZLIB == 1 && HAVE_LIBZ
+#if LLVM_ENABLE_ZLIB == 1
 static int encodeZlibCompressionLevel(zlib::CompressionLevel Level) {
   switch (Level) {
     case zlib::NoCompression: return 0;

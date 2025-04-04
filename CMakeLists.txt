@@ -462,6 +462,10 @@ include(HandleLLVMOptions)
 # Verify that we can find a Python 3 interpreter and force cmake to use it.
 find_package(Python3 REQUIRED)
 
+if (LLVM_ENABLE_ZLIB)
+  find_package(ZLIB REQUIRED)
+endif()
+
 find_package(SPIRV-Tools CONFIG)
 if (NOT TARGET SPIRV-Tools)
   message(FATAL_ERROR "SPIRV-Tools target not found.")
@@ -796,6 +800,13 @@ if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
     PATTERN ".svn" EXCLUDE
     )
 
+  if(LLVM_ENABLE_ZLIB)
+    set(MINIZ_EXCLUDE_PATTERNS
+      PATTERN "miniz.h" EXCLUDE)
+  else()
+    set(MINIZ_EXCLUDE_PATTERNS)
+  endif()
+
   install(DIRECTORY ${LLVM_INCLUDE_DIR}/llvm
     DESTINATION include
     COMPONENT llvm-headers
@@ -808,6 +819,7 @@ if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
     PATTERN "CMakeFiles" EXCLUDE
     PATTERN "config.h" EXCLUDE
     PATTERN ".svn" EXCLUDE
+    ${MINIZ_EXCLUDE_PATTERNS}
     )
 
   if (NOT CMAKE_CONFIGURATION_TYPES)

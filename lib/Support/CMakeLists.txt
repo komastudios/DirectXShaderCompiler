@@ -20,9 +20,6 @@ if( NOT MSVC )
     if( LLVM_ENABLE_THREADS AND HAVE_LIBPTHREAD )
       set(system_libs ${system_libs} pthread)
     endif()
-    if ( LLVM_ENABLE_ZLIB AND HAVE_LIBZ )
-      set(system_libs ${system_libs} z)
-    endif()
     set(system_libs ${system_libs} m)
   endif( MINGW )
 endif( NOT MSVC )
@@ -150,3 +147,7 @@ set_property(TARGET LLVMSupport PROPERTY COMPILE_FLAGS /EHsc )
 endif(MSVC)
 
 target_link_libraries(LLVMSupport PUBLIC LLVMMSSupport) # HLSL Change
+
+if ( LLVM_ENABLE_ZLIB )
+  target_link_libraries(LLVMSupport PRIVATE ZLIB::ZLIB)
+endif()
