@@ -373,13 +373,13 @@ function(llvm_add_library name)
     if(BUILD_SHARED_LIBS AND NOT ARG_STATIC)
       set(ARG_SHARED TRUE)
     endif()
-    if(NOT ARG_SHARED)
+    if(NOT ARG_SHARED OR (NOT DXC_BUILD_SHARED AND NOT ARG_STATIC))
       set(ARG_STATIC TRUE)
     endif()
   endif()
 
   # Generate objlib
-  if(ARG_SHARED AND ARG_STATIC)
+  if(DXC_BUILD_SHARED AND ARG_SHARED AND ARG_STATIC)
     # Generate an obj library for both targets.
     set(obj_name "obj.${name}")
     add_library(${obj_name} OBJECT EXCLUDE_FROM_ALL
@@ -394,7 +394,7 @@ function(llvm_add_library name)
     set_target_properties(${obj_name} PROPERTIES FOLDER "Object Libraries")
   endif()
 
-  if(ARG_SHARED AND ARG_STATIC)
+  if(DXC_BUILD_SHARED AND ARG_SHARED AND ARG_STATIC)
     # static
     set(name_static "${name}_static")
     if(ARG_OUTPUT_NAME)
@@ -413,7 +413,7 @@ function(llvm_add_library name)
 
   if(ARG_MODULE)
     add_library(${name} MODULE ${ALL_FILES})
-  elseif(ARG_SHARED)
+  elseif(DXC_BUILD_SHARED AND ARG_SHARED)
     add_windows_version_resource_file(ALL_FILES ${ALL_FILES})
     add_library(${name} SHARED ${ALL_FILES})
   else()
@@ -442,7 +442,7 @@ function(llvm_add_library name)
       )
   endif()
 
-  if(ARG_SHARED)
+  if(DXC_BUILD_SHARED AND ARG_SHARED)
     if(WIN32)
       set_target_properties(${name} PROPERTIES
         PREFIX ""
@@ -465,7 +465,7 @@ function(llvm_add_library name)
     # HLSL Change End - Don't generate so versioned files.
   endif()
 
-  if(ARG_MODULE OR ARG_SHARED)
+  if(DXC_BUILD_SHARED AND (ARG_MODULE OR ARG_SHARED))
     # Do not add -Dname_EXPORTS to the command-line when building files in this
     # target. Doing so is actively harmful for the modules build because it
     # creates extra module variants, and not useful because we don't use these
@@ -489,6 +489,7 @@ function(llvm_add_library name)
     ${LLVM_LINK_COMPONENTS}
     )
 
+  get_target_property(lib_type ${name} TYPE)
   if(CMAKE_VERSION VERSION_LESS 2.8.12)
     # Link libs w/o keywords, assuming PUBLIC.
     target_link_libraries(${name}
@@ -496,7 +497,7 @@ function(llvm_add_library name)
       ${lib_deps}
       ${llvm_libs}
       )
-  elseif(ARG_STATIC)
+  elseif(lib_type STREQUAL "STATIC_LIBRARY")
     target_link_libraries(${name} INTERFACE
       ${ARG_LINK_LIBS}
       ${lib_deps}

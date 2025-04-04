@@ -13,6 +13,12 @@
 #ifndef __DXC_API__
 #define __DXC_API__
 
+#include "dxc/config.h"
+
+#if !defined(DXC_API_IMPORT) && defined(DXC_BUILD_STATIC)
+#define DXC_API_IMPORT
+#endif
+
 #ifdef _WIN32
 #ifndef DXC_API_IMPORT
 #define DXC_API_IMPORT __declspec(dllimport)

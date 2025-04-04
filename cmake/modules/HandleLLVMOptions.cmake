@@ -675,12 +675,8 @@ append_if(LLVM_BUILD_INSTRUMENTED_COVERAGE "-fprofile-instr-generate='${LLVM_PRO
 
 # Plugin support
 # FIXME: Make this configurable.
-if(WIN32 OR CYGWIN)
-  if(BUILD_SHARED_LIBS)
-    set(LLVM_ENABLE_PLUGINS ON)
-  else()
-    set(LLVM_ENABLE_PLUGINS OFF)
-  endif()
-else()
+if(DXC_BUILD_SHARED)
   set(LLVM_ENABLE_PLUGINS ON)
+else()
+  set(LLVM_ENABLE_PLUGINS OFF)
 endif()

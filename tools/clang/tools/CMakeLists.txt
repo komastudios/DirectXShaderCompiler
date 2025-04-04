@@ -43,3 +43,25 @@ add_subdirectory(dxlib-sample)
 add_subdirectory(dotnetc)
 endif (MSVC)
 # HLSL Change Ends
+
+#=============================================================================================================
+# Add custom target aliases
+#=============================================================================================================
+add_library(dxil ALIAS dxildll)
+
+#=============================================================================================================
+# Add custom target to install dxclib headers
+#=============================================================================================================
+add_custom_target(dxclib-headers)
+
+install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/dxclib/dxc.h
+    DESTINATION include/dxclib
+    COMPONENT dxclib-headers)
+
+add_custom_target(install-dxclib-headers
+    DEPENDS dxclib-headers
+    COMMAND "${CMAKE_COMMAND}"
+            -DCMAKE_INSTALL_COMPONENT=dxclib-headers
+            -P "${CMAKE_BINARY_DIR}/cmake_install.cmake")  
+

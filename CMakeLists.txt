@@ -101,6 +101,9 @@ if ( HLSL_SUPPORT_QUERY_GIT_COMMIT_INFO )
   add_definitions(-DSUPPORT_QUERY_GIT_COMMIT_INFO)
 endif()
 
+option(DXC_BUILD_SHARED "Build shared libraries" ON)
+option(DXC_BUILD_STATIC "Build static libraries" OFF)
+
 option(DXC_DISABLE_ALLOCATOR_OVERRIDES "Disable usage of allocator overrides" OFF)
 mark_as_advanced(DXC_DISABLE_ALLOCATOR_OVERRIDES)
 
