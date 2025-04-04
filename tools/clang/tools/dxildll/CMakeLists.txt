@@ -83,4 +83,23 @@ endif()
 set_target_properties(dxildll
   PROPERTIES
   OUTPUT_NAME "dxil"
+  NO_SONAME TRUE
 )
+
+if (APPLE)
+  set_property(TARGET dxildll APPEND_STRING PROPERTY
+    LINK_FLAGS " -Wl,-install_name,@rpath/${CMAKE_SHARED_LIBRARY_PREFIX}dxil${CMAKE_SHARED_LIBRARY_SUFFIX}")
+elseif(UNIX)
+  set_property(TARGET dxildll APPEND_STRING PROPERTY
+    LINK_FLAGS " -Wl,-soname,${CMAKE_SHARED_LIBRARY_PREFIX}dxil${CMAKE_SHARED_LIBRARY_SUFFIX}")
+endif()
+
+install(TARGETS dxildll
+  ${install_dest}
+  COMPONENT dxildll)
+
+add_custom_target(install-dxildll
+  DEPENDS dxildll
+  COMMAND "${CMAKE_COMMAND}"
+          -DCMAKE_INSTALL_COMPONENT=dxildll
+          -P "${CMAKE_BINARY_DIR}/cmake_install.cmake")
