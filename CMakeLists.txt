@@ -459,6 +459,11 @@ include(HandleLLVMOptions)
 # Verify that we can find a Python 3 interpreter and force cmake to use it.
 find_package(Python3 REQUIRED)
 
+find_package(SPIRV-Tools CONFIG)
+if (NOT TARGET SPIRV-Tools)
+  message(FATAL_ERROR "SPIRV-Tools target not found.")
+endif()
+
 ######
 # LLVMBuild Integration
 #
@@ -655,7 +660,7 @@ set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
 # enable warnings as errors for debug build
 if (MSVC)
-  SET(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} /WX")
+  SET(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} /Wv:18")
 endif (MSVC)
 
 include(AddLLVM)
